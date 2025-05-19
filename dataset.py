@@ -135,21 +135,21 @@ class VAEDataset(LightningDataModule):
                                             transforms.CenterCrop(148),
                                             transforms.Resize(self.patch_size),
                                             transforms.ToTensor(),])
-        
-        self.train_dataset = MyCelebA(
-            self.data_dir,
-            split='train',
-            transform=train_transforms,
-            download=False,
+
+        from torchvision import datasets
+
+        self.train_dataset = datasets.ImageFolder(
+            root=os.path.join(self.data_dir, 'train'),
+            transform=train_transforms
         )
-        
-        # Replace CelebA with your dataset
-        self.val_dataset = MyCelebA(
-            self.data_dir,
-            split='test',
-            transform=val_transforms,
-            download=False,
+        self.val_dataset = datasets.ImageFolder(
+            root=os.path.join(self.data_dir, 'val'),
+            transform=val_transforms
         )
+        # self.test_dataset = datasets.ImageFolder(
+        #     root=os.path.join(self.data_dir, 'test'),
+        #     transform=test_transforms
+        # )
 #       ===============================================================
         
     def train_dataloader(self) -> DataLoader:
