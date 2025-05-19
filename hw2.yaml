@@ -1,0 +1,63 @@
+# configs/custom_vae.yaml
+
+###############################################################################
+# MODEL SELECTION & ARCHITECTURE
+###############################################################################
+model_params:
+  # Choose one of the implemented models by name (case-sensitive):
+  #   VanillaVAE, BetaVAE, DisentangledBetaVAE, InfoVAE,
+  #   IWAE, MIWAE, DFCVAE, MSSIMVAE, CVAE, CategoricalVAE, JointVAE,
+  #   LogCoshVAE, SWAE, VQ_VAE, DIPVAE, HWAE, HVAE, VampVAE, WAE_MMD_RBF, WAE_MMD_IMQ, etc.
+  name: "VanillaVAE"                                # e.g. “BetaVAE” or “IWAE”
+  in_channels: 3                                    # # input channels (e.g. 1 for MNIST, 3 for RGB)
+  latent_dim: 128                                   # dimensionality of z
+  # Most models share these; some may ignore them or have additional params:
+  hidden_dims: [32, 64, 128, 256]                   # encoder/decoder layer widths
+  # model-specific extras (uncomment as needed):
+  # beta: 4.0                                       # for BetaVAE, DisentangledBetaVAE
+  # num_importance_samples: 5                       # for IWAE/MIWAE
+  # m_vae_num_components: 5                         # for VampVAE
+  # commitment_cost: 0.25                           # for VQ_VAE
+
+###############################################################################
+# DATASET & DATALOADER
+###############################################################################
+data_params:
+  data_path: "/absolute/or/relative/path/to/data/"  # e.g. "./Data/celeba/img_align_celeba"
+  train_batch_size: 64
+  val_batch_size:   64
+  patch_size:       64                              # crop size (most archs expect 64×64)
+  num_workers:      4
+
+###############################################################################
+# TRAINING & OPTIMIZER SETTINGS
+###############################################################################
+exp_params:
+  manual_seed:      42
+  LR:               1e-3
+  weight_decay:     0.0
+  scheduler_gamma:  0.95
+  kld_weight:       0.00025                         # λ for KLD term (ignored by some models)
+  # add any extra scheduler or optimizer args here:
+  # scheduler_step_size: 10
+  # optimizer: "Adam"                                # (only if you modified VAEXperiment)
+
+###############################################################################
+# PyTorch-LIGHTNING RUNNER (ddp, GPUs, epochs…)
+###############################################################################
+trainer_params:
+  gpus:              [0]                             # list or integer; use [] for CPU
+  max_epochs:        100
+  gradient_clip_val: 1.5
+  # accelerator: "ddp"                               # uncomment to override default DDPPlugin
+
+###############################################################################
+# LOGGING & CHECKPOINTS
+###############################################################################
+logging_params:
+  save_dir: "logs/"
+  name:     "MyVAE_Experiment"                      # becomes logs/MyVAE_Experiment/version_/
+
+# Samples & reconstructions will be saved under:
+#   logs/MyVAE_Experiment/version_X/Samples
+#   logs/MyVAE_Experiment/version_X/Reconstructions
