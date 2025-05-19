@@ -102,6 +102,15 @@ class VanillaVAE(BaseVAE):
         result = result.view(-1, 512, 2, 2)
         result = self.decoder(result)
         result = self.final_layer(result)
+        # # Convert to NumPy array
+        # import numpy as np
+        # img_np = np.array(result.cpu())
+        #
+        # print("Info for decoder output")
+        # print("Image shape:", img_np.shape)
+        # print("Min pixel value:", img_np.min())
+        # print("Max pixel value:", img_np.max())
+        # print("Data type:", img_np.dtype)
         return result
 
     def reparameterize(self, mu: Tensor, logvar: Tensor) -> Tensor:
@@ -132,6 +141,7 @@ class VanillaVAE(BaseVAE):
         :return:
         """
         recons = args[0]
+        # recons = (recons + 1) / 2  # BECAUSE OF TANH, WHY WASNT THIS IN ORIGINAL?
         input = args[1]
         mu = args[2]
         log_var = args[3]

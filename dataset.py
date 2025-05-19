@@ -126,30 +126,36 @@ class VAEDataset(LightningDataModule):
         
 #       =========================  CelebA Dataset  =========================
     
-        train_transforms = transforms.Compose([transforms.RandomHorizontalFlip(),
-                                              transforms.CenterCrop(148),
+        train_transforms = transforms.Compose([
+                                            # transforms.RandomHorizontalFlip(),
+                                              # transforms.CenterCrop(148),
                                               transforms.Resize(self.patch_size),
-                                              transforms.ToTensor(),])
+                                              transforms.ToTensor(),
+                                              transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)),
+                                               ])
         
-        val_transforms = transforms.Compose([transforms.RandomHorizontalFlip(),
-                                            transforms.CenterCrop(148),
-                                            transforms.Resize(self.patch_size),
-                                            transforms.ToTensor(),])
+        val_transforms = transforms.Compose([
+                                            # transforms.RandomHorizontalFlip(),
+                                            # transforms.CenterCrop(148),
+                                            transforms.Resize((self.patch_size,self.patch_size)),
+                                            transforms.ToTensor(),
+                                            transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)),
+                                             ])
 
         from torchvision import datasets
 
         self.train_dataset = datasets.ImageFolder(
             root=os.path.join(self.data_dir, 'train'),
-            transform=train_transforms
+            transform=val_transforms
         )
         self.val_dataset = datasets.ImageFolder(
             root=os.path.join(self.data_dir, 'val'),
             transform=val_transforms
         )
-        # self.test_dataset = datasets.ImageFolder(
-        #     root=os.path.join(self.data_dir, 'test'),
-        #     transform=test_transforms
-        # )
+        self.test_dataset = datasets.ImageFolder(
+            root=os.path.join(self.data_dir, 'test'),
+            transform=val_transforms
+        )
 #       ===============================================================
         
     def train_dataloader(self) -> DataLoader:
